@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Application;
+use App\Icon;
 use App\Item;
 use App\Jobs\ProcessApps;
 use App\User;
@@ -239,25 +240,9 @@ class ItemController extends Controller
         ]);
 
         if ($request->hasFile('file')) {
-            $image = $request->file('file');
-            $extension = $image->getClientOriginalExtension();
-
-            if ($extension === 'svg') {
-                $sanitizer = new Sanitizer();
-                $sanitizedSvg = $sanitizer->sanitize(file_get_contents($image->getRealPath()));
-
-                // Verify that the sanitization removed malicious content
-                if (strpos($sanitizedSvg, '<script>') !== false) {
-                    throw ValidationException::withMessages(['file' => 'SVG contains malicious content and cannot be uploaded.']);
-                }
-
-                // Save the sanitized SVG back to the file
-                file_put_contents($image->getRealPath(), $sanitizedSvg);
-            }
-
-            $path = $image->store('icons', 'public');
+            $icon = Icon::storeUpload($request->file('file'), $request->input('icon_name'));
             $request->merge([
-                'icon' => $path,
+                'icon' => $icon->path,
             ]);
         } elseif (strpos($request->input('icon'), 'http') === 0) {
             $options = [

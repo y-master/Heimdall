@@ -48,11 +48,56 @@
 
             $('#websiteiconoptions').on('click', '.iconbutton', function (e) {
                 const src = $('.selecticon', this).attr('src')
-                $('#appimage').html("<img src='"+src+"' /><input type='hidden' name='icon' value='"+src+"' />");
+                const value = $(this).data('path') || src
+                $('#appimage').html("<img src='"+src+"' /><input type='hidden' name='icon' value='"+value+"' />");
                 $('#tile-preview .app-icon').attr('src', src);
+                $('#upload').val('');
+                $('#icon-name-wrapper').hide();
 
             }).on('click', '.selectclose', function () {
                 $('#websiteiconoptions').html('')
+            })
+
+            // Icon library picker
+            let iconLibrary = []
+            const renderIconLibrary = function (icons) {
+                const results = $('#websiteiconoptions .results').empty()
+                icons.forEach(icon => {
+                    results.append(`
+                        <div class="iconbutton" data-path="${icon.path}">
+                            <img class="selecticon" src="${icon.url}" />
+                            <span class="icon-name">${icon.name}</span>
+                        </div>
+                    `)
+                })
+            }
+            $('#choose-icon').on('click', function (e) {
+                e.preventDefault()
+                $.get(base + 'icons', function (data) {
+                    iconLibrary = data
+                    $('#websiteiconoptions').html(
+                        '<div class="header"><span>Select Icon</span><span class="selectclose">Close</span></div>' +
+                        '<input type="text" id="icon-library-search" placeholder="Search..." style="margin-bottom: 10px;" />' +
+                        '<div class="results"></div>'
+                    )
+                    renderIconLibrary(iconLibrary)
+                }, 'json')
+            })
+            $('#websiteiconoptions').on('input', '#icon-library-search', function () {
+                const query = $(this).val().toLowerCase()
+                renderIconLibrary(iconLibrary.filter(icon => icon.name.toLowerCase().indexOf(query) !== -1))
+            })
+
+            // Show the icon name field when a file is selected
+            $('#upload').on('change', function () {
+                if (this.files && this.files.length) {
+                    $('#icon-name-wrapper').show()
+                    if (!$('#icon_name').val()) {
+                        $('#icon_name').val(this.files[0].name.replace(/\.[^.]+$/, ''))
+                    }
+                } else {
+                    $('#icon-name-wrapper').hide()
+                }
             })
 
             $('.tags').select2();

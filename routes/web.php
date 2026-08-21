@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\IconController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ItemRestController;
 use App\Http\Controllers\SearchController;
@@ -92,6 +93,15 @@ Route::get('titlecolour', function (Request $request) {
 Route::resource('users', UserController::class);
 
 /**
+ * Icon library.
+ */
+Route::get('icons', [IconController::class, 'index'])->name('icons.index');
+Route::post('icons', [IconController::class, 'store'])->name('icons.store');
+Route::patch('icons/{id}', [IconController::class, 'update'])->name('icons.update');
+Route::delete('icons/{id}', [IconController::class, 'destroy'])->name('icons.destroy');
+Route::post('icons/{id}/replace', [IconController::class, 'replace'])->name('icons.replace');
+
+/**
  * Settings.
  */
 Route::name('settings.')->prefix('settings')->group(function () {
@@ -99,6 +109,7 @@ Route::name('settings.')->prefix('settings')->group(function () {
     Route::get('edit/{id}', [SettingsController::class,'edit'])->name('edit');
     Route::get('clear/{id}', [SettingsController::class,'clear'])->name('clear');
     Route::patch('edit/{id}', [SettingsController::class,'update']);
+    Route::get('icons', [IconController::class, 'manage'])->name('icons');
 });
 
 Auth::routes(['register' => false]);

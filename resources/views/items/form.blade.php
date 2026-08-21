@@ -103,6 +103,12 @@
                         <button class="btn">{{ __('app.buttons.upload')}} </button>
                         <input type="file" id="upload" name="file" />
                     </div>
+                    <button type="button" class="btn" id="choose-icon" style="margin-left: 8px;">{{ __('app.buttons.choose_icon') }}</button>
+                </div>
+                <div class="input" id="icon-name-wrapper" style="display: none;">
+                    <label>{{ __('app.icons.icon_name') }}</label>
+                    {{ html()->text('icon_name', old('icon_name'))->id('icon_name')->placeholder(__('app.icons.icon_name'))->class('form-control') }}
+                    <small class="help">{{ __('app.icons.icon_name_help') }}</small>
                 </div>
             </div>
         </div>
