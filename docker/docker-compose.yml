@@ -1,26 +1,18 @@
-version: "3"
 services:
-  nginx:
-    build:
-      context: .
-      dockerfile: nginx/Dockerfile
-    ports: 
-      - "8080:80"
-    networks:
-      - internal
-    volumes:
-      - ../:/var/www/html
-  php:
+  heimdall:
     build:
       context: .
       dockerfile: php/Dockerfile
-    networks:
-      - internal
+    container_name: heimdall-dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../:/var/www/html
+      - heimdall_vendor:/var/www/html/vendor
     environment:
       XDEBUG_MODE: debug
       XDEBUG_CONFIG: client_host=host.docker.internal client_port=9003
-    volumes:
-      - ../:/var/www/html
-networks:
-  internal:
-    driver: bridge
+      PHP_CLI_SERVER_WORKERS: 4
+
+volumes:
+  heimdall_vendor:
